@@ -10,7 +10,7 @@ Our app will look like this:
 1. Create an empty _.yml_ file named `demo-pod.yml`. We will use this file to create the declarative configuration of the API objects required to deploy the demo application in a single pod.
 
 2. Add the resource declaration to the yml file for a Pod API abject as follows:
-```
+```yaml
   apiVersion: v1
   kind: Pod
   metadata:
@@ -18,7 +18,7 @@ Our app will look like this:
 ```
 
 3. Next, on the line beneath the _metadata_ definition add the spec for the 3 containers within our application. The _containers_ element is an array. Each container should define the image, a name for the container within the pod, and a list of ports to be exposed from the container
-```
+```yaml
 spec:
   containers:
   - image: azwickey/fortune-ui:latest
@@ -39,7 +39,7 @@ spec:
 ```
 
 4. Lastly, add the _labels_ attribute to the metadata section of the resource configuration. We'll add an "app" and "deployment" label. Make sure this is a child of the metadata attribute
-```
+```yaml
 labels:
     app: fortune
     deployment: pks-workshop
@@ -47,7 +47,7 @@ labels:
 
 5. The completed pod declaration should look like this:
 
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -78,7 +78,7 @@ spec:
 
 1. Within the same yml file, create another yml directive at the top of the file.
 Yml directives are separated by 3 dashes `---`. Within this new directive add the resource definition for a Service API object as follows:
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -90,7 +90,7 @@ metadata:
 
 - The service spec requires a service type. We'll use the type LoadBalancer since we want to expose our application externally
 
-```
+```yaml
 spec:
   ports:
   - port: 80
@@ -104,14 +104,14 @@ spec:
 
 3. We need to create a resource selector in order to determine which pods to link to the service. This is where the label we applied to the pod resource object comes into play. We'll create a selector to select any pod that has the label _app: fortune_. Add this selector as the last attribute of the Service _spec_, right under the type attribute.
 
-```
+```yaml
 selector:
   app: fortune
 ```
 
 4. As with the pod API object, add a _labels_ attribute to the metadata section of the service resource configuration. We'll add the same labels "app" and "deployment", but use a different value for the app label to differentiate our pod and our service.
 
-```
+```yaml
 labels:
     app: fortune-service
     deployment: pks-workshop
@@ -119,7 +119,7 @@ labels:
 
 5. The completed configuration for the Pod and Service API objects should appear as follows:
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -175,7 +175,7 @@ watch kubectl get all -l deployment=pks-workshop --show-labels
 
 2. Deploy the demo application to your Kubernetes cluster using the kubectl _create_ command, using the declarative configuration you just created
 
-```
+```bash
 $ kubectl create -f demo-pod.yml
 service "fortune-service" created
 pod "fortune" created
@@ -183,7 +183,7 @@ pod "fortune" created
 
 3. Inspect the output of your watch of the kubectl get command. You'll see the newly deployed Pod and Service appear and startup. Take note of the external IP address that is assigned to the fortune-service as that can be used to access the application in the next step.
 
-```
+```gradle
 Every 2.0s: kubectl get all -l deployment=pks-workshop --show-labels                                                                              
 
  NAME         READY     STATUS    RESTARTS   AGE       LABELS
@@ -203,7 +203,7 @@ Every 2.0s: kubectl get all -l deployment=pks-workshop --show-labels
 
 6. Additionally, you may recall we exposed a service on port 9080. This represents the backend Java JEE application exposing a JAX-RS service endpoint. Access the /fortune-backend-jee/app/fortune/all endpoint using the external IP address but specify port 9080 this time. E.G. http://35.229.79.31:9080/fortune-backend-jee/app/fortune/all This can be done in a web browser or using a tool such as `curl`:
 
-```
+```bash
 $ curl -v http://35.229.79.31:9080/fortune-backend-jee/app/fortune/all
 *   Trying 35.229.79.31...
 * TCP_NODELAY set
