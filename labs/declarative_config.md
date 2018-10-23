@@ -1,10 +1,10 @@
 ## Using Declarative Configuration to Deploy a Sample Application
 
 Lets deploy the initial version of our demo application, PKS Fortune Teller. This is a 3 tier application that contains a HTML/JavaScript app served from Nginx, a Spring Boot REST backend, and a Redis persistent data service.
-<img src="/images/02-1.png"  width="1000" height="500">
+<img src="/images/02-1.png"  width="750" height="500">
 
 Our app will look like this:
-<img src="/images/02-2.png"  width="1000" height="500">
+<img src="/images/02-2.png"  width="750" height="500">
 
 ### Create declarative resource definition for demo application
 1. Create an empty _.yml_ file named `demo-pod.yml`. We will use this file to create the declarative configuration of the API objects required to deploy the demo application in a single pod.
@@ -195,11 +195,11 @@ Every 2.0s: kubectl get all -l deployment=pks-workshop --show-labels
 
 4. Open a web browser and access the application using the external IP on port 80. E.G. http://35.229.79.31
 
-<img src="/images/02-3.png"  width="1000" height="500">
+<img src="/images/02-3.png"  width="750" height="500">
 
 5. Right now we receive the default fortune of "Your future is murky" because the Redis backend doesn't have any fortunes loaded. Click on the _All Fortunes_ link and type a fortune in the text box. Upon hitting return the fortune will be stored into Redis. Add multiple fortunes.
 
-<img src="/images/02-4.png"  width="1000" height="500">
+<img src="/images/02-4.png"  width="750" height="500">
 
 6. Additionally, you may recall we exposed a service on port 9080. This represents the backend Java JEE application exposing a JAX-RS service endpoint. Access the /fortune-backend-jee/app/fortune/all endpoint using the external IP address but specify port 9080 this time. E.G. http://35.229.79.31:9080/fortune-backend-jee/app/fortune/all This can be done in a web browser or using a tool such as `curl`:
 

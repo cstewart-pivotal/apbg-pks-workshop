@@ -3,7 +3,7 @@
 ### Goal
 Many types of workloads should be deployed into Pivotal Application Service (PAS) while others should prefer PKS. Our Fortune UI application is a good example of this as it is something we may want to iterate upon adding features, and because it simply requires a web server to service status HTML and Javascript content. Lets migrate our Frontend UI into the appropriate platform. The end result will resemble the following diagram:
 
-<img src="/images/03-1.png"  width="1000" height="500">
+<img src="/images/03-1.png"  width="750" height="500">
 
 ### Prerequisites
 Prior to completing this demo the following pre-reqs need to be met:
@@ -124,15 +124,15 @@ start command:     $HOME/boot.sh
 
 3. Open a browser and navigate to the http endpoint that is listed in the "routes" portion of the command output. Make sure you access http and not https. E.G. http://fortune-ui.apps.cloud.zwickey.net You may notice that no fortunes appear!
 
-<img src="/images/03-2.png"  width="1000" height="500">
+<img src="/images/03-2.png"  width="750" height="500">
 
 4. Fortunes do not appear as this UI is not connecting to our backend deployed to PKS. Login into the PAS application manager UI, which is is typically deployed to https://apps.$FQDN_PAS_SYSTEM_DOMAIN and navigate to the organization and space to which the fortune-ui application was deployed and click on the application _fortune-ui_:
 
-<img src="/images/03-3.png"  width="1000" height="500">
+<img src="/images/03-3.png"  width="750" height="500">
 
 5. Navigate to _Settings_ and Click on the _REVEAL USER PROVIDED ENV VARIABLES_ button. Add an env variable named "BACKEND" and provide the http address to the ip and port (which should be 9080) of the fortune backend in pks. E.G. http://35.227.19.28:9080. Make sure to click the save button.
 
-<img src="/images/03-4.png"  width="1000" height="500">
+<img src="/images/03-4.png"  width="750" height="500">
 
 6. Switch back to the PCF CLI and execute the `cf restage` command on the fortune-ui application.
 
@@ -181,7 +181,7 @@ start command:     $HOME/boot.sh
 ```
 7. Refresh the browser window running the fortunes UI application. Since the frontend is now configured via and env variable to connect to the appropriate backend, fortunes are now appearing:
 
-<img src="/images/03-5.png"  width="1000" height="500">
+<img src="/images/03-5.png"  width="750" height="500">
 
 ### Deploy the Fortune Backend as a Kubernetes Deployment
 
@@ -505,7 +505,7 @@ start command:     $HOME/boot.sh
 
 12. Refresh the browser window running the fortunes UI application. Fortunes should now be served using the new backend.
 
-<img src="/images/03-51.png"  width="1000" height="500">
+<img src="/images/03-51.png"  width="750" height="500">
 
 ### Change Compute Resources Allocated to Fortune-Backend Application
 
