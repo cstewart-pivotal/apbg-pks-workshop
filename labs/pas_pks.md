@@ -445,3 +445,164 @@ $ curl -v http://35.190.163.92:9080/fortune-backend-jee/app/fortune/all
 ```
 
 10. Using the PCF CLI or Pivotal Apps Manager UI, update the BACKEND environment variable bound to the frontend-ui application deployed to PAS to reflect the new location of the fortune-backend-service (the external IP used above).
+
+```bash
+$ cf set-env fortune-ui BACKEND http://35.190.163.92:9080
+Setting env variable 'BACKEND' to 'http://35.190.163.92:9080' for app fortune-ui in org Pivotal / space development as azwickey...
+OK
+TIP: Use 'cf restage fortune-ui' to ensure your env variable changes take effect
+```
+
+11. As the command output advises, `cf restage` must be executed for this change to take affect.
+
+```
+$ cf restage fortune-ui
+Restaging app fortune-ui in org Pivotal / space development as azwickey...
+
+Staging app and tracing logs...
+   Downloading staticfile_buildpack...
+   Downloaded staticfile_buildpack
+   Creating container
+   Successfully created container
+   Downloading build artifacts cache...
+   Downloading app package...
+   Downloaded app package (3.3K)
+   Downloaded build artifacts cache (223B)
+   -----> Staticfile Buildpack version 1.4.18
+   -----> Installing nginx
+          Using nginx version 1.13.6
+   -----> Installing nginx 1.13.6
+          Copy [/tmp/buildpacks/4e19ed4fb1dfc48806ec7fbc5df9f7df/dependencies/a212d0a2bdc205474bed1efb149a7865/nginx-1.13.6-linux-x64-b624d604.tgz]
+   -----> Root folder /tmp/app
+   -----> Copying project files into public
+   -----> Configuring nginx
+   Exit status 0
+   Uploading droplet, build artifacts cache...
+   Uploading build artifacts cache...
+   Uploading droplet...
+   Uploaded build artifacts cache (222B)
+   Uploaded droplet (2.7M)
+
+Waiting for app to start...
+   Uploading complete
+   Stopping instance cf07c972-db11-43b3-bce4-a0e94b40148b
+   Destroying container
+   Successfully destroyed container
+
+name:              fortune-ui
+requested state:   started
+instances:         1/1
+usage:             64M x 1 instances
+routes:            fortune-ui.apps.cloud.zwickey.net
+last uploaded:     Mon 29 Jan 13:07:37 EST 2018
+stack:             cflinuxfs2
+buildpack:         staticfile_buildpack
+start command:     $HOME/boot.sh
+
+     state     since                  cpu    memory        disk         details
+#0   running   2018-01-29T20:42:12Z   0.0%   3.8M of 64M   5.8M of 1G
+```
+
+12. Refresh the browser window running the fortunes UI application. Fortunes should now be served using the new backend.
+
+<img src="/images/03-51.png"  width="1000" height="500">
+
+### Change Compute Resources Allocated to Fortune-Backend Application
+
+1. Update the deployment definition with demo-deployment.yml with an addition to the container spec adding a resource request and limit section. We'll request 1GB of memory and .5 cpu and limit our container so as to not use more than 2GBs of memory and 1 cpu. As with the env var, make sure this value is part of the first element in the _containers_ array - e.g. is a sibling to the _image_, _name_, _livenessProbe_ attributes in the data structure:
+
+```yaml
+resources:
+  requests:
+    memory: "1G"
+    cpu: "0.5"
+  limits:
+    memory: "2G"
+    cpu: "1.0"
+```
+
+2. The completed configuration for the Deployment API object should appear as follows:
+
+```yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: fortune-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fortune-backend
+  template:
+    metadata:
+      name: fortune-backend
+      labels:
+        app: fortune-backend
+        deployment: pks-workshop
+    spec:
+      containers:
+      - image: azwickey/fortune-backend-jee:latest
+        name: fortune-backend
+        ports:
+        - containerPort: 9080
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /fortune-backend-jee/
+            port: 9080
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          failureThreshold: 2
+        env:
+        - name: REDIS_HOST
+          value: "fortune-service.default.svc.cluster.local"
+        resources:
+          requests:
+            memory: "1G"
+            cpu: "0.5"
+          limits:
+            memory: "2G"
+            cpu: "1.0"
+```
+
+3. The deployment API object already exists within the Kubernetes cluster. Use the kubectl _apply_ command to update the existing objects, passing in the yml description of the api objects:
+
+```bash
+$ kubectl apply -f demo-deployment.yml                                     
+service "fortune-backend-service" unchanged
+deployment "fortune-backend" configured
+```
+
+4. Kubernetes will create 2 new pods governed by the new resource locations and destroy the old pods. This can be seen by viewing the age of the fortune-backend pods displayed in the output from our watch command on kubectl, which now indicate they are only 1 min old:
+
+```bash
+Every 2.0s: kubectl get all -l deployment=pks-workshop --show-labels                                                          Mon Jan 29 16:08:25 2018
+
+ NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       LABELS
+ deploy/fortune-backend   2         2         2            2           35m       app=fortune-backend,deployment=pks-workshop
+
+ NAME                            DESIRED   CURRENT   READY     AGE       LABELS
+ rs/fortune-backend-5cc4b6dc6    2         2         2         9m        app=fortune-backend,deployment=pks-workshop,pod-template-hash=177062872
+ rs/fortune-backend-7c54577f6c   0         0         0         35m       app=fortune-backend,deployment=pks-workshop,pod-template-hash=3710133927
+ rs/fortune-backend-7c87696b97   0         0         0         11m       app=fortune-backend,deployment=pks-workshop,pod-template-hash=3743252653
+
+ NAME                     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       LABELS
+ deploy/fortune-backend   2         2         2            2           35m       app=fortune-backend,deployment=pks-workshop
+
+ NAME                            DESIRED   CURRENT   READY     AGE       LABELS
+ rs/fortune-backend-5cc4b6dc6    2         2         2         9m        app=fortune-backend,deployment=pks-workshop,pod-template-hash=177062872
+ rs/fortune-backend-7c54577f6c   0         0         0         35m       app=fortune-backend,deployment=pks-workshop,pod-template-hash=3710133927
+ rs/fortune-backend-7c87696b97   0         0         0         11m       app=fortune-backend,deployment=pks-workshop,pod-template-hash=3743252653
+
+ NAME                                 READY     STATUS    RESTARTS   AGE       LABELS
+ po/fortune                           3/3       Running   0          5h        app=fortune,deployment=pks-workshop
+ po/fortune-backend-5cc4b6dc6-nhx7p   1/1       Running   0          1m        app=fortune-backend,deployment=pks-workshop,pod-template-hash=177062872
+ po/fortune-backend-5cc4b6dc6-vsb22   1/1       Running   0          1m        app=fortune-backend,deployment=pks-workshop,pod-template-hash=177062872
+
+ NAME                          TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                                      AGE       LABELS
+ svc/fortune-backend-service   LoadBalancer   10.100.200.113   35.190.163.92   9080:31848/TCP                               35m       app=fortune-backe
+ nd-service,deployment=pks-workshop
+ svc/fortune-service           LoadBalancer   10.100.200.11    35.227.19.28    80:30312/TCP,9080:31274/TCP,6379:32468/TCP   5h        app=fortune-servi
+ ce,deployment=pks-workshop
+```
