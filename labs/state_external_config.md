@@ -534,6 +534,3 @@ root@fortune-redis-0:/data# redis-cli
 127.0.0.1:6379> GET 3
 "Your kindness will pay itself tenfold"
 ```
-
-
-<img src="/images/03-1.png"  width="750" height="500">
