@@ -2,12 +2,12 @@
 
 ---
 ## Agenda
-- 11:00-12:00 Introduction to K8s & PKS
+- 11:00-12:00 [Introduction to K8s & PKS](https://docs.google.com/presentation/d/1-5r4rS6iRa9c38D0FjrVy4V3rNSPpDpWoLXWIMBwI3U/edit?usp=sharing)
 - 12:00-12:30 Lunch
-- 12:30-1:00 Building a Container & Deploying a Pod
-- 1:00-1:45 Declarative Configuration & Services  
-- 1:45-2:30 PAS & PKS: Best of Both Worlds
-- 2:30-3:15 Introducing State & External Configuration
-- 3:15-4:00 Batch Jobs
-- 4:00-4:30 Wrap Up, Q&A
-- 4:30-5:00 Retro
+- 12:30-1:00 [Building a Container & Deploying a Pod](/) | [Lab](/labs/deploying_container.md)
+- 1:00-1:45 [Declarative Configuration & Services](/)  | [Lab](/labs/declarative_config.md)
+- 1:45-2:30 [PAS & PKS: Best of Both Worlds](/) | [Lab](/labs/pas_pks.md)
+- 2:30-3:15 [Introducing State & External Configuration](/) | [Lab](/labs/state_external_config.md)
+- 3:15-4:00 [Batch Jobs](/) | [Lab](/labs/batch_jobs.md)
+- 4:00-4:30 [Wrap Up, Q&A](/)
+- 4:30-5:00 [Retro](/)
