@@ -1,0 +1,20 @@
+<server description="Sample Liberty server">
+
+    <featureManager>
+        <feature>jaxrs-2.0</feature>
+        <feature>jsonp-1.0</feature>
+    </featureManager>
+
+    <httpEndpoint httpPort="9080" httpsPort="9443"
+                  id="defaultHttpEndpoint" host="*" />
+
+    <webApplication location="fortune-backend-jee.war" contextRoot="/fortune-backend-jee"/>
+
+    <cors domain="/fortune-backend-jee/app"
+          allowedOrigins="*"
+          allowedMethods="OPTIONS, GET, DELETE, POST, PUT"
+          allowedHeaders="*"
+          exposeHeaders="*"
+          allowCredentials="true"
+          maxAge="3600" />
+</server>
