@@ -226,7 +226,7 @@ $ curl -v http://35.229.79.31:9080/fortune-backend-jee/app/fortune/all
 
 7. Lastly, if the Redis Client CLI is installed on your machine attempt to access Redis using the service port exposed for Redis: 6379
 
-```
+```ruby
 $ redis-cli -h 35.229.79.31
 35.229.79.31:6379> ping
 PONG
