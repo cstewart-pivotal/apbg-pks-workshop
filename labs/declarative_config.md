@@ -73,3 +73,95 @@ spec:
     - containerPort: 6379
       protocol: TCP
 ```
+
+### Create a service resource for routing external traffic
+
+1. Within the same yml file, create another yml directive at the top of the file. Yml directives are separated by 3 dashes `---`. Within this new directive add the resource definition for a Service API object as follows:
+```
+apiVersion: v1
+kind: Service
+metadata:
+    name: fortune-service
+---
+```
+
+2. Next, on the line beneath the _metadata_ element add the spec for the ports that need to exposed by the application containers. The _ports_ element is an array.
+
+- The service spec requires a service type. We'll use the type LoadBalancer since we want to expose our application externally
+
+```
+spec:
+  ports:
+  - port: 80
+    name: ui
+  - port: 9080
+    name: backend
+  - port: 6379
+    name: redis
+  type: LoadBalancer
+```
+
+3. We need to create a resource selector in order to determine which pods to link to the service. This is where the label we applied to the pod resource object comes into play. We'll create a selector to select any pod that has the label _app: fortune_. Add this selector as the last attribute of the Service _spec_, right under the type attribute.
+
+```
+selector:
+  app: fortune
+```
+
+4. As with the pod API object, add a _labels_ attribute to the metadata section of the service resource configuration. We'll add the same labels "app" and "deployment", but use a different value for the app label to differentiate our pod and our service.
+
+```
+labels:
+    app: fortune-service
+    deployment: pks-workshop
+```
+
+5. The completed configuration for the Pod and Service API objects should appear as follows:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fortune-service
+    deployment: pks-workshop
+  name: fortune-service
+spec:
+  ports:
+  - port: 80
+    name: ui
+  - port: 9080
+    name: backend
+  - port: 6379
+    name: redis
+  type: LoadBalancer
+  selector:
+    app: fortune
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: fortune
+    deployment: pks-workshop
+  name: fortune
+spec:
+  containers:
+  - image: azwickey/fortune-ui:latest
+    name: fortune-ui
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  - image: azwickey/fortune-backend-jee:latest
+    name: fortune-backend
+    ports:
+    - containerPort: 9080
+      protocol: TCP
+  - image: redis
+    name: redis
+    ports:
+    - containerPort: 6379
+      protocol: TCP
+```
+
+### Deploy the demo application
