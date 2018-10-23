@@ -1,4 +1,4 @@
-# ![PKS Logo](/images/pks.png =25x) PKS Workshop
+# <img src="/images/pks.png"  width="50" height="50">  PKS Workshop 
 
 ---
 ## Agenda
