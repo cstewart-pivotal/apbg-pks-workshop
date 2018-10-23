@@ -53,7 +53,9 @@ Org:            PKS Workshop
 Space:          PKS 1
 ```
 
-2.Change directories to the root of the fortune-ui application under _$WORKSHOP_ROOT/apps/fortune-ui/_ and deploy the application to PAS using cf push. When we deploy the application we will direct PAS to use the staticfile buildpack:
+2. Change directories to the root of the fortune-ui application under _$WORKSHOP_ROOT/apps/fortune-ui/_ and deploy the application to PAS using cf push. When we deploy the application we will direct PAS to use the staticfile buildpack:
+
+**Note, you will need to push with a unique route. Ie, appending your initials to the app name `fortune-ui`
 
 ```bash
 $ cf push fortune-ui -m 64M -b staticfile_buildpack
