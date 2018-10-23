@@ -11,7 +11,7 @@
 
     `cat dockerfile`
 
-2. Build the Articulate Docker image. Note: `name` refers to your Docker username.
+2. Build the Articulate Docker image. Note: `{{name}}` refers to your docker name.
 
     `docker build . -t {{name}}/articulate`
 
